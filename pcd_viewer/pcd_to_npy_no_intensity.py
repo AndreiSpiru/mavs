@@ -3,8 +3,8 @@ import numpy as np
 
 if __name__=="__main__":
     cloud = o3d.io.read_point_cloud('test.pcd')
-    output = cloud.points
+    output = np.asarray(cloud.points)
     rows, cols = output.shape
-    append = np.zeroes(rows, cols + 1)
-    output[:,:-1] = append
-    np.save("test_no_intensity", cloud.points)
+    zeros = np.zeros((rows, 1))
+    output = np.append(output, zeros, axis = 1)
+    np.save("test_no_intensity", output)
