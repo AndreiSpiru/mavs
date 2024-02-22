@@ -79,6 +79,13 @@ while (True):
         sim.lidar.Update(sim.env,dt)
         sim.lidar.DisplayPerspective()
 
+        if n == 24:
+            print('Saving frame ' + str(n))
+            sys.stdout.flush()
+            sim.cam.Update(sim.env,dt)
+             # Save annotated lidar point cloud
+            sim.lidar.AnnotateFrame(sim.env)
+            sim.lidar.SaveLabeledPcd(output_folder+'/'+str(n)+'_labeled.pcd') 
         # Save labeled data fram when 'c' key is pressed
         if keyboard.is_pressed('c'):
             # print feedback that the frame is being saved

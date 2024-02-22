@@ -42,8 +42,8 @@ class MavsSpavSimulation(object):
 
         # Set environment properties
         self.env.SetTime(13) # 0-23
-        self.env.SetFog(70.0) # 0.0-100.0
-        self.env.SetRainRate(20.0) # 0-25
+        self.env.SetFog(50.0) # 0.0-100.0
+        self.env.SetRainRate(0.0) # 0-25
         self.env.SetWind( [2.5, 1.0] ) # Horizontal windspeed in m/s
 
         # https://cgoodin.gitlab.io/msu-autonomous-vehicle-simulator/classmavs__python_1_1mavs__interface_1_1_mavs_camera.html
