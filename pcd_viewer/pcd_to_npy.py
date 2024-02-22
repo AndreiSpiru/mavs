@@ -9,5 +9,5 @@ if __name__=="__main__":
     # reshape pc array 
     pc_array = np.transpose(pc_array)
     # save np array to file
-    np.save("test.npy", pc_array)
+    np.save(sys.argv[1][:-3] + "npy", pc_array)
     print(pc_array)
