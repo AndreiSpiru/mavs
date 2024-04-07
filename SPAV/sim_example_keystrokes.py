@@ -25,9 +25,10 @@ if (len(sys.argv)>1):
     control_mode = sys.argv[1]
 
 # create a folder for the saved data
-output_folder = 'output_data'
-if not os.path.isdir(output_folder):
-    os.makedirs(output_folder)
+#output_folder_base = 'output_data/0-10/VLP-16'
+output_folder_base = 'output_data/0-10/HDL-64E'
+if not os.path.isdir(output_folder_base):
+    os.makedirs(output_folder_base)
 
 # Create the simulation
 sim = MavsSpavSimulation()
@@ -39,6 +40,8 @@ sim.lidar.SetDisplayColorType("color")
 # Start the simulation main loop
 dt = 1.0/30.0 # time step, seconds
 n = 0 # loop counter
+output_counter = "25";
+#output_counter = "1;
 while (True):
     # tw0 is for timing purposes used later
     tw0 = time.time()
@@ -79,41 +82,71 @@ while (True):
         sim.lidar.Update(sim.env,dt)
         sim.lidar.DisplayPerspective()
 
-        if n == 24:
-            print('Saving frame ' + str(n))
-            sys.stdout.flush()
-            sim.cam.Update(sim.env,dt)
-             # Save annotated lidar point cloud
-            sim.lidar.AnnotateFrame(sim.env)
-            sim.lidar.SaveLabeledPcd(output_folder+'/'+str(n)+'_labeled.pcd') 
+        # if n == 24:
+        #     print('Saving frame ' + str(n))
+        #     sys.stdout.flush()
+
+        #     # update the camera sensor
+        #     sim.cam.Update(sim.env,dt)
+
+        #     # save the camera data
+        #     im_name = (output_folder+'/'+str(n)+'_image')
+        #     sim.cam.SaveCameraImage(im_name+'.bmp')
+
+        #     # save the annotated camera frame
+        #     # don't include file extension, it's automatically .bmp
+        #     sim.cam.SaveAnnotation(sim.env,im_name+'_annotated')
+
+        #     # Save annotated lidar point cloud
+        #     sim.lidar.AnnotateFrame(sim.env)
+        #     sim.lidar.SaveLabeledPcd(output_folder+'/'+str(n)+'_labeled.pcd')  
+
+        if keyboard.is_pressed('l'):
+            sim.env.SetRainRate(2.5)
+            sim.env.SetTurbidity(4.0)
+            sim.env.SetCloudCover(0.2)
+        if keyboard.is_pressed('m'):
+            sim.env.SetRainRate(5)
+            sim.env.SetTurbidity(5.0)
+            sim.env.SetCloudCover(0.5)
+        if keyboard.is_pressed('h'):
+            sim.env.SetRainRate(10)
+            sim.env.SetTurbidity(7.0)
+            sim.env.SetCloudCover(0.7)
         # Save labeled data fram when 'c' key is pressed
         if keyboard.is_pressed('c'):
             # print feedback that the frame is being saved
-            print('Saving frame ' + str(n))
+            output_name = output_counter
+            output_folder = output_folder_base
+            if sim.env.rain_rate == 0:
+                output_folder = output_folder + '/clear'
+            elif sim.env.rain_rate == 2.5:
+                output_folder = output_folder + '/light'
+            elif sim.env.rain_rate == 5:
+                output_folder = output_folder + '/moderate'
+            elif sim.env.rain_rate == 10:
+                output_folder = output_folder + '/heavy'
+            
+            if not os.path.isdir(output_folder):
+                os.makedirs(output_folder)
+            print('Saving frame ' + output_folder + "/" + output_name)
             sys.stdout.flush()
 
             # update the camera sensor
             sim.cam.Update(sim.env,dt)
 
-            # save the camera data
-            im_name = (output_folder+'/'+str(n)+'_image')
-            sim.cam.SaveCameraImage(im_name+'.bmp')
 
-            # convert it to jpg for later
-            img = Image.open(im_name+'.bmp')
-            img.save(im_name+'.jpg' , 'JPEG', quality=100)
+            # save the camera data
+            im_name = (output_folder+'/'+output_name+'_image')
+            sim.cam.SaveCameraImage(im_name+'.bmp')
 
             # save the annotated camera frame
             # don't include file extension, it's automatically .bmp
             sim.cam.SaveAnnotation(sim.env,im_name+'_annotated')
 
-            # and convert the annotated from to jpg
-            label_img = Image.open(im_name+'_annotated.bmp')
-            label_img.save(im_name+'_annotated.jpg' , 'JPEG', quality=100)
-
             # Save annotated lidar point cloud
             sim.lidar.AnnotateFrame(sim.env)
-            sim.lidar.SaveLabeledPcd(output_folder+'/'+str(n)+'_labeled.pcd')    
+            sim.lidar.SaveLabeledPcd(output_folder+'/'+output_name+'_labeled.pcd')    
 
     # Update the loop counter
     n = n+1

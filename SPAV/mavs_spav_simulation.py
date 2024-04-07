@@ -78,7 +78,8 @@ class MavsSpavSimulation(object):
 
         # https://cgoodin.gitlab.io/msu-autonomous-vehicle-simulator/classmavs__python_1_1mavs__interface_1_1_mavs_lidar.html
         # Create a MAVS lidar and set its properties
-        self.lidar = mavs.MavsLidar('VLP-16')
+        self.lidar = mavs.MavsLidar('HDL-64E')
+        #self.lidar = mavs.MavsLidar('VLP-16')
         # Set the same offset as the camera
         self.lidar.SetOffset([1.0, 0.0, 2.0],[1.0,0.0,0.0,0.0])
 
@@ -89,9 +90,9 @@ class MavsSpavSimulation(object):
         veh_file = 'forester_2017_rp3d_tires.json'
         self.veh.Load(mavs_data_path+'/vehicles/rp3d_vehicles/' + veh_file)
         # Starting point for the vehicle
-        self.veh.SetInitialPosition(10.0, 7.5, 0.0) # in global ENU
+        self.veh.SetInitialPosition(10.0, 55.0, 0.0) # in global ENU
         # Initial Heading for the vehicle, 0=X, pi/2=Y, pi=-X
-        self.veh.SetInitialHeading(0.0) # in radians
+        self.veh.SetInitialHeading(-1.5) # in radians
         # Do a short update step for MAVS to finish loading the vehicle
         self.veh.Update(self.env, 0.0, 0.0, 1.0, 0.000001)
 
@@ -99,15 +100,15 @@ class MavsSpavSimulation(object):
         # Add actors to the scene, in this case two vehicles which will drive around
         # These have to be added after the main vehicle is loaded
         # Actors in MAVS are any dynamic object in the scene other than the ego-vehicle
-        self.env.AddActor(mavs_data_path+'/actors/actors/l200_actor_top_loop.json')
-        self.env.AddActor(mavs_data_path+'/actors/actors/lambo_actor_outer_loop.json')
+        #self.env.AddActor(mavs_data_path+'/actors/actors/l200_actor_top_loop.json')
+        #self.env.AddActor(mavs_data_path+'/actors/actors/lambo_actor_outer_loop.json')
 
         # https://cgoodin.gitlab.io/msu-autonomous-vehicle-simulator/classmavs__python_1_1mavs__interface_1_1_mavs_waypoints.html
         # Load waypoints for the vehicle to follow 
         waypoints = mavs.MavsWaypoints()
         # waypoints files are in the data/waypoints folder
-        #waypoints_file = 'spa_city_outer_loop.vprp'
-        waypoints_file = 'spa_city_top_block.vprp'
+        waypoints_file = 'spa_city_outer_loop.vprp'
+        # waypoints_file = 'spa_city_top_block.vprp'
         waypoints.Load(mavs_data_path+'/waypoints/'+waypoints_file)
 
         # https://cgoodin.gitlab.io/msu-autonomous-vehicle-simulator/classmavs__python_1_1mavs__interface_1_1_mavs_vehicle_controller.html

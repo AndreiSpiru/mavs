@@ -77,7 +77,7 @@ for i in range(waypoints.num_waypoints):
     lidar.Update(env,0.1)
     lidar.DisplayPerspective()
     # lidar.SaveLidarImage('cloud_clear' + str(i).zfill(4) +'.bmp')
-    lidar.SavePerspectivePcd('point_cloud'+ str(i).zfill(4) +'.pcd')
+    #lidar.SavePerspectivePcd('point_cloud'+ str(i).zfill(4) +'.pcd')
     # lidar.AnnotateFrame(env)
     # lidar.AnalyzeCloud('labeled_lidar',i,False)
     # lidar.SetDisplayColorType('label')
