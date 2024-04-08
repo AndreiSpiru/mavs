@@ -22,16 +22,11 @@ def roi_filter(points, roi_min=(0,-inf,-inf), roi_max=(inf,inf,inf)):
     return roi_pcd
 
 def get_bounding_box(file):
-    pc = pypcd.PointCloud.from_path(file)
-    pc_data = pc.pc_data
-    count = 0
-    pc_array = np.array([pc_data["x"], pc_data["y"], pc_data["z"], pc_data["label"]], dtype=np.float32)
-    pc_array = np.transpose(pc_array)
+    pc_array = np.load(file)
+    print (pc_array)
     vehicle_points = pc_array[pc_array[:,3] == 6.0]
     vehicle_points = vehicle_points[:, :-1]
     pcd = roi_filter(vehicle_points)
-    # pcd = o3d.geometry.PointCloud()
-    # pcd.points = o3d.utility.Vector3dVector(vehicle_points)
     aabb = pcd.get_axis_aligned_bounding_box()
     aabb.color = (1, 0, 0)
     obb = pcd.get_oriented_bounding_box()
@@ -44,5 +39,5 @@ def get_bounding_box(file):
     converted_bbox = np.append(converted_bbox, 0.0)
     print(converted_bbox)
     o3d.visualization.draw_geometries([pcd, aabb, obb])
-file = 'output_data_converted/0-10/HDL-64E/clear/21_labeled.pcd'
+file = 'output_data_converted/0-10/HDL-64E/clear/1_labeled_verification.npy'
 get_bounding_box(file)

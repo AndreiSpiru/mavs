@@ -14,6 +14,13 @@ def save_npy(directory, filename):
     filename = filename[:-3] + "npy"
     filepath = os.path.join(directory, filename)
     np.save(filepath, pc_array)
+    pc_array = np.array([pc_data["x"], pc_data["y"], pc_data["z"], pc_data["label"]], dtype=np.float32)
+    # reshape pc array 
+    pc_array = np.transpose(pc_array)
+    # save np array to file
+    filename = filename[:-4] + "_verification.npy"
+    filepath = os.path.join(directory, filename)
+    np.save(filepath, pc_array)
 
 def process_files_in_subdirectories(root_directory, extension):
     # Walk through all subdirectories recursively
