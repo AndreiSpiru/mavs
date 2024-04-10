@@ -4,6 +4,22 @@ import numpy as np
 from pypcd import pypcd
 import math
 
+def roi_filter(points, roi_min=(0,-35,-35), roi_max=(35,35,35)):
+
+    mask_roi = np.logical_and.reduce((
+        points[:, 0] >= roi_min[0],
+        points[:, 0] <= roi_max[0],
+        abs(points[:, 1] / points[:, 0]) <= 5,
+        points[:, 1] >= roi_min[1],
+        points[:, 1] <= roi_max[1],
+        points[:, 2] >= roi_min[2],
+        points[:, 2] <= roi_max[2]
+    ))
+
+    roi_points = points[mask_roi]
+
+    return roi_points
+    
 def process_files_and_create_excel(root_directory, output_excel):
     # Create an empty DataFrame to store all data
     df = pd.DataFrame(columns=['File Name', 'Sensor Type', 'Condition'])
@@ -33,6 +49,7 @@ def process_files_and_create_excel(root_directory, output_excel):
                                 pc_array = np.array([pc_data["x"], pc_data["y"], pc_data["z"], pc_data["label"]], dtype=np.float32)
                                 # reshape pc array 
                                 pc_array = np.transpose(pc_array)
+                                pc_array = roi_filter(pc_array)
                                 # save np array to file
                                 min_distance = float('inf')
                                 for row in pc_array:
