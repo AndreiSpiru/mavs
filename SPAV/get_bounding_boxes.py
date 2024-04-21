@@ -3,11 +3,12 @@ import open3d as o3d
 import numpy as np
 import torch
 
-def roi_filter(points, roi_min=(0,-inf,-inf), roi_max=(30,inf,inf)):
+def roi_filter(points, roi_min=(0,-35,-35), roi_max=(35,35,35)):
 
     mask_roi = np.logical_and.reduce((
         points[:, 0] >= roi_min[0],
         points[:, 0] <= roi_max[0],
+        abs(points[:, 1] / points[:, 0]) <= 5,
         points[:, 1] >= roi_min[1],
         points[:, 1] <= roi_max[1],
         points[:, 2] >= roi_min[2],
@@ -88,5 +89,5 @@ def get_bounding_box(file):
     # o3d.visualization.draw_geometries([pcd, aabb, obb])
     return pred_boxes
 
-file = '../../output_data_converted/0-10/HDL-64E/clear/4_labeled_verification.npy'
+file = '../../output_data_converted/0-10/VLP-16/clear/23_labeled_verification.npy'
 get_bounding_box(file)
