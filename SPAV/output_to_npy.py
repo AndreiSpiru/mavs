@@ -38,4 +38,4 @@ def process_files_in_directory(directory, extension):
         if os.path.isfile(filepath) and filename.endswith(extension):
             save_npy(directory, filename)
 if __name__=="__main__":
-    process_files_in_subdirectories('output_data_converted', '.pcd')
+    process_files_in_subdirectories('output_data_new', '.pcd')

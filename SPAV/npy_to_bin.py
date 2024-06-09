@@ -26,4 +26,4 @@ def process_files_in_directory(directory, extension):
         if os.path.isfile(filepath) and filename.endswith(extension):
             npy_to_bin(directory, filename)
 if __name__=="__main__":
-    process_files_in_subdirectories('output_data_converted', '.npy')
+    process_files_in_subdirectories('output_data_new', 'labeled.npy')

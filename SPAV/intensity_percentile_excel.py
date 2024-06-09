@@ -22,7 +22,7 @@ def roi_filter(points, roi_min=(0,-35,-35), roi_max=(35,35,35)):
     
 def process_files_and_create_excel(root_directory, output_excel):
     # Create an empty DataFrame to store all data
-    df = pd.DataFrame(columns=['File Name', 'Sensor Type', 'Condition'])
+    df = pd.DataFrame(columns=['File Name', 'Sensor Type', 'Condition', 'Intensity Percentile 50', 'Intensity Percentile 90', 'Intensity Percentile 95', 'Intensity Percentile 99'	])
 
     # Iterate through subdirectories and process files
     for sensor_type in os.listdir(root_directory):
@@ -50,32 +50,27 @@ def process_files_and_create_excel(root_directory, output_excel):
                                 # reshape pc array 
                                 pc_array = np.transpose(pc_array)
                                 pc_array = roi_filter(pc_array)
-                                # Calculate the Euclidean distance of each point from the origin (0, 0, 0)
-                                distances = np.linalg.norm(pc_array[:, :3], axis=1)
+                          
+                                mask = pc_array[:, 3] == 6.0
+                                vehicle_points = pc_array[mask]
+                                # Extract intensity values
+                                intensities = [point[4] for point in vehicle_points]
+                                intensities = np.array(intensities)
 
-                                # Find the maximum distance
-                                max_distance = np.max(distances)
-                                # save np array to file
-                                min_distance = float('inf')
-                                intensity_sum = 0
-                                for row in pc_array:
-                                    if row[3] == 6.0:
-                                        count += 1
-                                        intensity_sum += row[4]
-                                        distance = math.sqrt((row[0] )**2 + 
-                                                            (row[1])**2 + 
-                                                            (row[2])**2)
-                                        if distance < min_distance:
-                                            min_distance = distance
-                                average_intensity = 0
-                                if count > 0:
-                                    average_intensity = intensity_sum / count
-                                df = df._append({'File Name': filename, 'Sensor Type': sensor_type, 'Condition': condition,'Total Detected Points': pc_array.shape[0], 'Vehicle Detected Points': count, 'Distance to vehicle': min_distance, 'Maximum range': max_distance, 'Average intenisty for vehicle point': average_intensity}, ignore_index=True)
+                                # Define desired percentiles
+                                percentiles = [50, 90, 95, 99]
+
+                                # Calculate percentile values
+                                percentile_values = np.percentile(intensities, percentiles)
+                                df = df._append({'File Name': filename, 'Sensor Type': sensor_type, 'Condition': condition, 
+                                                 'Intensity Percentile 50': percentile_values[0], 'Intensity Percentile 90': percentile_values[1]
+                                                 ,'Intensity Percentile 95': percentile_values[2], 'Intensity Percentile 99': percentile_values[3]},
+                                                   ignore_index=True)
 
     # Write DataFrame to Excel
     df.to_excel(output_excel, index=False)
     print(f"Excel file created at: {output_excel}")
 # Example usage:
 root_directory = 'output_data_new/0-10'
-output_excel = 'output_data_final.xlsx'
+output_excel = 'intensity_percentiles.xlsx'
 process_files_and_create_excel(root_directory, output_excel)
