@@ -59,9 +59,11 @@ def process_files_and_create_excel(root_directory, output_excel):
 
                                 # Define desired percentiles
                                 percentiles = [50, 90, 95, 99]
-
-                                # Calculate percentile values
-                                percentile_values = np.percentile(intensities, percentiles)
+                                if len(intensities) > 0:
+                                    # Calculate percentile values
+                                    percentile_values = np.percentile(intensities, percentiles)
+                                else:
+                                    percentile_values = [np.nan] * len(percentiles)
                                 df = df._append({'File Name': filename, 'Sensor Type': sensor_type, 'Condition': condition, 
                                                  'Intensity Percentile 50': percentile_values[0], 'Intensity Percentile 90': percentile_values[1]
                                                  ,'Intensity Percentile 95': percentile_values[2], 'Intensity Percentile 99': percentile_values[3]},

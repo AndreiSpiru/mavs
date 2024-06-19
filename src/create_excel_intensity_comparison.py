@@ -23,7 +23,7 @@ def roi_filter(points, roi_min=(0,-35,-35), roi_max=(35,35,35)):
 def process_files_and_create_excel(root_directory, output_excel):
     # Create an empty DataFrame to store all data
     df = pd.DataFrame(columns=['File Name', 'Sensor Type', 'Condition'])
-
+    errors = []
     # Iterate through subdirectories and process files
     for sensor_type in os.listdir(root_directory):
         sensor_path = os.path.join(root_directory, sensor_type)
@@ -79,9 +79,13 @@ def process_files_and_create_excel(root_directory, output_excel):
                                         if distance < min_distance:
                                             min_distance = distance
                                 average_intensity = 0
+                                best_alpha = 0
+                                best_beta = 0
+                                min_error = 0
                                 if count > 0:
                                     average_intensity = intensity_sum / count
                                 
+                                error = 0
                                 predicted_intensity = average_intensity
                                 if rain_rate >0:
                                     filepath_clear = filepath.replace(condition, 'clear')
@@ -100,24 +104,37 @@ def process_files_and_create_excel(root_directory, output_excel):
                                     average_intensity1 = 0
                                     if count > 0:
                                         average_intensity1 = intensity_sum1 / count1
-                                    print(filepath_clear)
-                                    print(average_intensity1)
-                                    print(min_distance)
-                                    print(rain_rate)
-                                    changed_fraction =  math.exp(-2 * 0.01 * average_distance * math.pow(rain_rate, 0.6)) - 1.0
-                                    print(changed_fraction)
-                                    predicted_intensity = average_intensity1 * changed_fraction + average_intensity1
+                                        print(filepath_clear)
+                                        print(average_intensity1)
+                                        print(min_distance)
+                                        print(rain_rate)
+                                        alpha = 0.01
+                                        beta = 0.6
+                                        changed_fraction =  math.exp(-2 * alpha * min_distance * math.pow(rain_rate, beta)) - 1.0 
+                                        predicted_intensity = average_intensity1 * changed_fraction + average_intensity1
+
+                                        error = abs(predicted_intensity - average_intensity) / average_intensity
+                                        if sensor_type == 'VLP-16':
+                                            errors.append(error)
                                 df = df._append({'File Name': filename, 'Sensor Type': sensor_type, 
                                                  'Rain rate': rain_rate, 
                                                  'Vehicle Detected Points': count, 'Distance to vehicle': min_distance,
                                                  'Average Distance': average_distance, 
                                                  'Average intenisty for vehicle point': average_intensity,
-                                                 'Predicted intensity': predicted_intensity
+                                                 'Predicted intensity': predicted_intensity,
+                                                  'Error': error	
                                                 }, ignore_index=True)
 
     # Write DataFrame to Excel
     df.to_excel(output_excel, index=False)
     print(f"Excel file created at: {output_excel}")
+    percentiles = [50, 90, 95, 99]
+    if len(errors) > 0:
+        # Calculate percentile values
+        percentile_values = np.percentile(errors, percentiles)
+    else:
+        percentile_values = [np.nan] * len(percentiles)
+    print(percentile_values)
 # Example usage:
 root_directory = 'output_data_new/0-10'
 output_excel = 'intensity_comparison.xlsx'

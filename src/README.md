@@ -1,15 +1,14 @@
+# MAVS dataset generator
+Simulation files in this folder are based on the SPAV examples provided for MAVS. These files are extended to accomodate our needs for collecting large amounts of data. Some further files are added for data conversion and creation of excel tables.
+
+Below is a copy of the original SPAV README:
+
 # SPAV Examples
 The examples in this folder are specific to the  *Sensing and Perception for Autonomous Vehicles* (SPAV) course at Mississippi State University.
 
 **IMPORTANT** : To run these examples, you must edit line 18 of 
 'mavs_spav_simulation.py' to have the file path to YOUR installation
 of MAVS.
-
-## Description of Files
-* *mavs_spav_simulation.py* - Loads the vehicle, sensors, and scene used in the sim.
-* *autonomy.py* & *astar.py* - Simple autonomy algorithms for demonstrating "in-the-loop" sims.
-* *sim_example_keystrokes.py* - Example simulation where labeled data can be generated.
-* *sim_example_autonomy.py* - Example "in-the-loop" simulation with MAVS.
 
 ## Prequisites
 

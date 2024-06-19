@@ -97,7 +97,7 @@ sim.lidar.SetDisplayColorType("color")
 # Start the simulation main loop
 dt = 1.0/30.0 # time step, seconds
 n = 0 # loop counter
-output_counter = "31";
+output_counter = "1"
 #output_counter = "1;
 while (True):
     # tw0 is for timing purposes used later
@@ -139,25 +139,6 @@ while (True):
         sim.lidar.Update(sim.env,dt)
         sim.lidar.DisplayPerspective()
 
-        # if n == 24:
-        #     print('Saving frame ' + str(n))
-        #     sys.stdout.flush()
-
-        #     # update the camera sensor
-        #     sim.cam.Update(sim.env,dt)
-
-        #     # save the camera data
-        #     im_name = (output_folder+'/'+str(n)+'_image')
-        #     sim.cam.SaveCameraImage(im_name+'.bmp')
-
-        #     # save the annotated camera frame
-        #     # don't include file extension, it's automatically .bmp
-        #     sim.cam.SaveAnnotation(sim.env,im_name+'_annotated')
-
-        #     # Save annotated lidar point cloud
-        #     sim.lidar.AnnotateFrame(sim.env)
-        #     sim.lidar.SaveLabeledPcd(output_folder+'/'+str(n)+'_labeled.pcd')  
-
         if keyboard.is_pressed('1'):
             sim.lidar = mavs.MavsLidar('VLP-16')
             # Set the same offset as the camera
@@ -170,9 +151,6 @@ while (True):
             sim.lidar.SetOffset([1.0, 0.0, 1.6],[1.0,0.0,0.0,0.0])
             output_folder_base = 'output_data_new/0-10/HDL-64E'
         
-        if keyboard.is_pressed('i'):
-            output_counter = increment_string_number(output_counter)
-            print('Output counter: ' + output_counter)
         if keyboard.is_pressed('i'):
             output_counter = increment_string_number(output_counter)
             print('Output counter: ' + output_counter)
